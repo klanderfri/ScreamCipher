@@ -19,27 +19,83 @@ namespace ScreamCipher
             Console.OutputEncoding = encoding;
             Console.InputEncoding = encoding;
 
-            Console.WriteLine("Enter ':q' to quit.'");
+            //Print instructions.
+            Console.WriteLine("The following commands are available:");
+            Console.WriteLine("':e' => Lets you enter a plaintext to encrypt.");
+            Console.WriteLine("':d' => Lets you enter an encrypted text to read.");
+            Console.WriteLine("':q' => Closes the program.");
+
             while (true)
             {
-                //Collect cleartext
                 Console.WriteLine();
-                Console.WriteLine("Enter cleartext: ");
-                var plaintext = Console.ReadLine();
+                Console.Write("Enter command => ");
+                var command = Console.ReadLine();
 
-                //Check for command inputs.
-                if (string.IsNullOrWhiteSpace(plaintext)) { continue; }
-                if (plaintext.Equals(":q")) { break; }
+                if (string.IsNullOrWhiteSpace(command)) { continue; }
+                switch (command.ToLower())
+                {
+                    case ":e":
+                        EncryptText();
+                        break;
 
-                //Encrypt the text.
-                var encryptedText = ScreamCiper.Screamify(plaintext);
+                    case ":d":
+                        DecryptText();
+                        break;
 
-                //Write the encrypted text to result file.
-                var encryptedFile = PathHelper.GetPathToEncryptionFile();
-                File.WriteAllText(encryptedFile, encryptedText, encoding);
-                Console.WriteLine("The encrypted text has been written to");
-                Console.WriteLine(encryptedFile);
+                    case ":q":
+                        return;
+
+                    default:
+                        Console.WriteLine($"Unknown command '{command}'.");
+                        break;
+                }
             }
+        }
+
+        private static void EncryptText()
+        {
+            //Collect cleartext
+            Console.WriteLine();
+            Console.Write("Enter cleartext => ");
+            var plaintext = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(plaintext))
+            {
+                Console.WriteLine("No plaintext entered.");
+                return;
+            }
+
+            //Encrypt the text.
+            var encryptedText = ScreamCiper.Screamify(plaintext);
+
+            //Write the encrypted text to result file.
+            var encryptedFile = PathHelper.GetPathToEncryptionFile();
+            File.WriteAllText(encryptedFile, encryptedText, encoding);
+            Console.WriteLine("The encrypted text has been written to");
+            Console.WriteLine(encryptedFile);
+        }
+
+        private static void DecryptText()
+        {
+            //Collect encrypted text.
+            Console.WriteLine();
+            Console.Write("Enter ciphertext => ");
+            var ciphertext = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(ciphertext))
+            {
+                Console.WriteLine("No ciphertext entered.");
+                return;
+            }
+
+            //Decrypt the text.
+            var decryptedText = ScreamCiper.Unscreamify(ciphertext);
+
+            //Write the decrypted text to result file.
+            var decryptedFile = PathHelper.GetPathToDecryptionFile();
+            File.WriteAllText(decryptedFile, decryptedText, encoding);
+            Console.WriteLine("The decrypted text has been written to");
+            Console.WriteLine(decryptedFile);
         }
     }
 }

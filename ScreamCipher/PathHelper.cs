@@ -20,8 +20,20 @@ namespace ScreamCipher
         public static string GetPathToEncryptionFile()
         {
             var folder = GetPathToEncryptionFolder();
-            var time = DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture);
+            var time = GetResultFilename();
             return Path.Combine(folder, $"{time}-encrypted.txt");
+        }
+
+        public static string GetPathToDecryptionFile()
+        {
+            var folder = GetPathToEncryptionFolder();
+            var time = GetResultFilename();
+            return Path.Combine(folder, $"{time}-decrypted.txt");
+        }
+
+        private static string GetResultFilename()
+        {
+            return DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture);
         }
     }
 }
