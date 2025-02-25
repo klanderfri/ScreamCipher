@@ -11,7 +11,7 @@ namespace ScreamCipher
 
     internal class Program
     {
-        private static readonly Encoding encoding = Encoding.UTF8;
+        private static readonly Encoding encoding = Encoding.Unicode;
 
         static void Main(string[] args)
         {
