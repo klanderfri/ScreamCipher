@@ -35,11 +35,19 @@ namespace ScreamCipher
                 switch (command.ToLower())
                 {
                     case ":e":
-                        EncryptText();
+                        TransformText(
+                            transformText: ScreamCiper.Screamify,
+                            pathToResultFile: PathHelper.GetPathToEncryptionFile(),
+                            fromLabel: "plaintext",
+                            toLabel: "encrypted");
                         break;
 
                     case ":d":
-                        DecryptText();
+                        TransformText(
+                            transformText: ScreamCiper.Unscreamify,
+                            pathToResultFile: PathHelper.GetPathToDecryptionFile(),
+                            fromLabel: "ciphertext",
+                            toLabel: "decrypted");
                         break;
 
                     case ":q":
@@ -52,50 +60,30 @@ namespace ScreamCipher
             }
         }
 
-        private static void EncryptText()
-        {
-            //Collect cleartext
-            Console.WriteLine();
-            Console.Write("Enter cleartext => ");
-            var plaintext = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(plaintext))
-            {
-                Console.WriteLine("No plaintext entered.");
-                return;
-            }
-
-            //Encrypt the text.
-            var encryptedText = ScreamCiper.Screamify(plaintext);
-
-            //Write the encrypted text to result file.
-            var encryptedFile = PathHelper.GetPathToEncryptionFile();
-            File.WriteAllText(encryptedFile, encryptedText, encoding);
-            Console.WriteLine("The encrypted text has been written to");
-            Console.WriteLine(encryptedFile);
-        }
-
-        private static void DecryptText()
+        private static void TransformText(
+            Func<string, string> transformText,
+            string pathToResultFile,
+            string fromLabel,
+            string toLabel)
         {
             //Collect encrypted text.
             Console.WriteLine();
-            Console.Write("Enter ciphertext => ");
-            var ciphertext = Console.ReadLine();
+            Console.Write($"Enter {fromLabel} => ");
+            var from = Console.ReadLine();
 
-            if (string.IsNullOrWhiteSpace(ciphertext))
+            if (string.IsNullOrWhiteSpace(from))
             {
-                Console.WriteLine("No ciphertext entered.");
+                Console.WriteLine($"No {fromLabel} entered.");
                 return;
             }
 
             //Decrypt the text.
-            var decryptedText = ScreamCiper.Unscreamify(ciphertext);
+            var to = transformText(from);
 
             //Write the decrypted text to result file.
-            var decryptedFile = PathHelper.GetPathToDecryptionFile();
-            File.WriteAllText(decryptedFile, decryptedText, encoding);
-            Console.WriteLine("The decrypted text has been written to");
-            Console.WriteLine(decryptedFile);
+            File.WriteAllText(pathToResultFile, to, encoding);
+            Console.WriteLine($"The {toLabel} text has been written to");
+            Console.WriteLine(pathToResultFile);
         }
     }
 }
